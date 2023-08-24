@@ -63,21 +63,18 @@ resource "azurerm_lb" "app_lb" {
 
 # Creates a backend pool for web subnet
 resource "azurerm_lb_backend_address_pool" "web_subnet_backend_pool" {
-#  resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.app_lb.id
   name                = "WebSubnetBackendPool"
 }
 
 # Creates a backend pool for my app subnet
 resource "azurerm_lb_backend_address_pool" "app_subnet_backend_pool" {
-#  resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.app_lb.id
   name                = "AppSubnetBackendPool"
 }
 
 # Creates a Probe for my web subnet
 resource "azurerm_lb_probe" "web_subnet_probe" {
-#  resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.app_lb.id
   name                = "WebSubnetProbe"
   protocol            = "Tcp"
@@ -89,7 +86,6 @@ resource "azurerm_lb_probe" "web_subnet_probe" {
 
 # Creates a probe for app subnet
 resource "azurerm_lb_probe" "app_subnet_probe" {
-#  resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.app_lb.id
   name                = "AppSubnetProbe"
   protocol            = "Tcp"
@@ -100,11 +96,9 @@ resource "azurerm_lb_probe" "app_subnet_probe" {
 
 # Creates LB rule for web subnet
 resource "azurerm_lb_rule" "web_subnet_lb_rule" {
-#  resource_group_name            = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.app_lb.id
   name                           = "WebSubnetLBRule"
   frontend_ip_configuration_name = azurerm_lb.app_lb.frontend_ip_configuration[0].name
-#  backend_address_pool_id        = azurerm_lb_backend_address_pool.web_subnet_backend_pool.id
   probe_id                       = azurerm_lb_probe.web_subnet_probe.id
   protocol                       = "Tcp"
   frontend_port                  = 80
@@ -113,11 +107,9 @@ resource "azurerm_lb_rule" "web_subnet_lb_rule" {
 
 # Creates a LB rule for app Subnet
 resource "azurerm_lb_rule" "app_subnet_lb_rule" {
-#  resource_group_name            = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.app_lb.id
   name                           = "AppSubnetLBRule"
   frontend_ip_configuration_name = azurerm_lb.app_lb.frontend_ip_configuration[0].name
-#  backend_address_pool_id        = azurerm_lb_backend_address_pool.app_subnet_backend_pool.id
   probe_id                       = azurerm_lb_probe.app_subnet_probe.id
   protocol                       = "Tcp"
   frontend_port                  = 8080
@@ -146,7 +138,6 @@ resource "azurerm_mssql_database" "Dev_DB" {
 #  read_scale     = true
   sku_name       = "S0"
 #  zone_redundant = true
-#  subnet_id      = azurerm_subnet.database.id
 }
 
 
@@ -162,7 +153,6 @@ resource "azurerm_mssql_virtual_network_rule" "vnr" {
 # Creates a sql firewall rule for the app subnet
 resource "azurerm_mssql_firewall_rule" "app_subnet_firewall_rule" {
   name                = "allow-app-subnet"
-#  resource_group_name = azurerm_resource_group.rg.name
   server_id         = azurerm_mssql_server.primary_server.id
   start_ip_address    = "10.0.2.0"   # Start IP of the App subnet
   end_ip_address      = "10.0.2.255" # End IP of the App subnet
@@ -228,17 +218,7 @@ resource "azurerm_log_analytics_workspace" "law" {
 resource "azurerm_monitor_diagnostic_setting" "mds" {
   name               = "my-monitor-diagnostic-setting"
     target_resource_id = azurerm_mssql_database.Dev_DB.id
-#  target_resource_id = azurerm_virtual_network.avn.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
-
-# enabled_log {
-#    category = "NetworkSecurityGroupEvent"
-#    enabled  = true
-
-#    retention_policy {
-#      enabled = false
-#   }
-#  }
 
   metric {
     category = "AllMetrics"
